@@ -35,7 +35,7 @@ def exibir_opcao_invalida():
 def validar_opcao_selecionada(entrada_menu):
     if entrada_menu.isdigit() and int(entrada_menu) >= 1 and int(entrada_menu) <= 6:
         return True
-    else:        
+    else:
         return False
 
 # funcao que valida a entrada de texto para os campos do cadastro de conta corrente
@@ -48,26 +48,45 @@ def obter_entrada_texto(campo):
 
         # explicar pra o Guilherme este trecho
         if len(entrada) > 0:
-            texto_valido = True # não é necessário essa linha por conta do return
+            texto_valido = True  # não é necessário essa linha por conta do return
             return entrada
         else:
             print("Dado digitado inválido. Não pode estar em branco")
 
-def obter_entrada_numerica(mensagem, minimo, maximo=float('inf')):
+
+def obter_entrada_numerica(mensagem, minimo):
     while True:
         # remove os espaços em branco e troca "," por "."
         entrada = input(mensagem).strip().replace(',', '.')
-        
+
         if entrada.replace('.', '', 1).isdigit() and entrada.count('.') <= 1:
             valor = float(entrada)
-            if minimo <= valor <= maximo:
+            if minimo <= valor:
                 return valor
             else:
-                print(f'Erro: o valor deve estar entre {minimo} e {maximo}.')
+                print(f'O valor deve ser pelo menos {minimo}.')
         else:
             print('Entrada inválida. Por favor, insira um número.')
 
 # funcao que exibe o menu de cadastro de conta corrente
+def validar_entrada_senha(senha):
+    return len(senha) == 6
+
+
+def obter_entrada_senha(campo):
+    senha = obter_entrada_texto(campo)
+
+    while not validar_entrada_senha(senha):
+        print("A senha deve conter 6 caracteres")
+        senha = obter_entrada_texto(campo)
+
+    return senha
+
+
+def validar_senha(senha, repetir_senha):
+    return senha == repetir_senha
+
+
 def cadastrar():
     limpar_tela()
     print('MACK BANK – CADASTRO DE CONTA')
@@ -83,39 +102,69 @@ def cadastrar():
     saldo_inicial = obter_entrada_numerica('SALDO INICIAL: ', 1000)
     limite_credito = obter_entrada_numerica('LIMITE DE CRÉDITO: ', 0)
 
+    senha = obter_entrada_senha("SENHA: ")
+    repetir_senha = obter_entrada_senha("REPITA A SENHA: ")
+
+    while not validar_senha(senha, repetir_senha):
+        print("As senhas não estão iguais")
+        senha = obter_entrada_senha("SENHA: ")
+        repetir_senha = obter_entrada_senha("REPITA A SENHA: ")
+
+    cadastro = {
+        "numero_conta": numero_conta,
+        "nome_cliente": nome_cliente,
+        "telefone": telefone,
+        "email": email,
+        "saldo_inicial": saldo_inicial,
+        "limite_credito": limite_credito,
+        "senha": senha
+    }
+
     input('CADASTRO REALIZADO! PRESSIONE UMA TECLA PARA VOLTAR AO MENU...')
+    return cadastro
 
 # funcao que exibe o menu de deposito
+
+
 def depositar():
     limpar_tela()
     print('depositar')
     input('Pressione ENTER para continuar...')
 
 # funcao que exibe o menu de saque
+
+
 def sacar():
     limpar_tela()
     print('sacar')
     input('Pressione ENTER para continuar...')
 
 # funcao que exibe o menu de consulta de saldo
+
+
 def consultar_saldo():
     limpar_tela()
     print('consultar_saldo')
     input('Pressione ENTER para continuar...')
 
 # funcao que exibe o menu de consulta de extrato
+
+
 def consultar_extrato():
     limpar_tela()
     print('consultar_extrato')
     input('Pressione ENTER para continuar...')
 
 # funcao que exibe o nome dos autores em finaliza o programa
+
+
 def sair():
     limpar_tela()
     print("MACK BANK – SOBRE")
     print("Este programa foi desenvolvido por")
     print("GUILHERME TEODORO DE OLIVEIRA (42303893)")
     print("LUCIANO PARANHOS (42324882)")
+
 
 # dicionario que armazena as funcoes de cada opcao do menu principal
 menu_opcoes = {
@@ -128,6 +177,8 @@ menu_opcoes = {
 }
 
 # funcao principal do programa
+
+
 def main():
     fim_execucao = False
 
@@ -135,8 +186,9 @@ def main():
         exibir_menu_principal()
 
         entrada_menu = input('\nSUA OPÇÃO: ')
-        opcao_selecionada_esta_validada = validar_opcao_selecionada(entrada_menu)
-        
+        opcao_selecionada_esta_validada = validar_opcao_selecionada(
+            entrada_menu)
+
         if opcao_selecionada_esta_validada:
 
             opcao_selecionada = int(entrada_menu)
@@ -148,6 +200,7 @@ def main():
                 menu_opcoes[opcao_selecionada]()
         else:
             exibir_opcao_invalida()
+
 
 # executa a funcao principal
 main()
