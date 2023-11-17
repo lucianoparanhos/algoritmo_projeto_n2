@@ -1,3 +1,7 @@
+# GUILHERME TEODORO DE OLIVEIRA (42303893)
+# LUCIANO PARANHOS (42324882)
+# MIGUEL HONORIO BOREL CUTIS DOS SANTOS (42320003)
+
 import os
 import random
 from sys import platform
@@ -80,6 +84,7 @@ def validar_entrada_senha(senha):
     return len(senha) == 6
 
 
+# funcao que solicita ao usuário para digitar a senha
 def obter_entrada_senha(campo):
     senha = obter_entrada_texto(campo)
 
@@ -170,20 +175,18 @@ def depositar(dados_cadastro):
     input('Pressione ENTER para continuar...')
 
 
-# funcao que retorna se a conta corrente esta bloqueada
-
-
 # funcao que exibe uma mensagem para conta bloqueada
 def exibir_mensagem_conta_bloqueada():
     print("CONTA BLOQUEADA! ENTRE EM CONTATO COM UM FUNCIONÁRIO")
     input('Pressione ENTER para continuar...')
+
 
 # funcao que exibe o menu de saque
 def sacar(dados_cadastro):
     limpar_tela()
     print("MACK BANK – SAQUE DA CONTA")
 
-    if dados_cadastro["conta_bloqueada"] == True:
+    if dados_cadastro["conta_bloqueada"]:
         exibir_mensagem_conta_bloqueada()
 
     else: 
@@ -219,7 +222,7 @@ def consultar_saldo(dados_cadastro):
     limpar_tela()
     print("MACK BANK – CONSULTA SALDO")
     
-    if dados_cadastro["conta_bloqueada"] == True:
+    if dados_cadastro["conta_bloqueada"]:
         exibir_mensagem_conta_bloqueada()
 
     else:
@@ -244,7 +247,7 @@ def consultar_saldo(dados_cadastro):
                         dados_cadastro["conta_bloqueada"] = True
                         exibir_mensagem_conta_bloqueada()
             
-            if senha_validada == True:
+            if senha_validada:
                 # O valor do saque deve ser maior que zero
                 print(f"SALDO EM CONTA: R$ {dados_cadastro["saldo"]:.2f}")
                 print(f"LIMITE DE CRÉDITO: R$ {dados_cadastro["limite_credito"]:.2f}")
@@ -255,14 +258,13 @@ def consultar_saldo(dados_cadastro):
             print("CONTA NÃO LOCALIZADA")
             input('Pressione ENTER para continuar...')
 
+
 # funcao que exibe o menu de consulta de extrato
-
-
 def consultar_extrato(dados_cadastro):
     limpar_tela()
     print("MACK BANK – EXTRATO DA CONTA")
     
-    if dados_cadastro["conta_bloqueada"] == True:
+    if dados_cadastro["conta_bloqueada"]:
         exibir_mensagem_conta_bloqueada()
 
     else:
@@ -311,6 +313,7 @@ def sair():
     print("Este programa foi desenvolvido por")
     print("GUILHERME TEODORO DE OLIVEIRA (42303893)")
     print("LUCIANO PARANHOS (42324882)")
+    print("MIGUEL HONORIO BOREL CUTIS DOS SANTOS (42320003)")
 
 
 def exibir_cadastro_primeira_opcao():
@@ -340,7 +343,7 @@ def main():
             opcao_selecionada = int(entrada_menu)
 
             if opcao_selecionada == 1:
-                if cadastro_realizado == True:
+                if cadastro_realizado:
                     limpar_tela()
                     print("CONTA CORRENTE já cadastrada!")
                     input('Pressione ENTER para continuar...')
@@ -350,28 +353,28 @@ def main():
 
 
             elif opcao_selecionada == 2:
-                if cadastro_realizado == False:
+                if not cadastro_realizado:
                     exibir_cadastro_primeira_opcao()
                 else:
                     depositar(dados_cadastro)
 
 
             elif opcao_selecionada == 3:
-                if cadastro_realizado == False:
+                if not cadastro_realizado:
                     exibir_cadastro_primeira_opcao()
                 else:
                     sacar(dados_cadastro)
 
 
             elif opcao_selecionada == 4:
-                if cadastro_realizado == False:
+                if not cadastro_realizado:
                     exibir_cadastro_primeira_opcao()
                 else:
                     consultar_saldo(dados_cadastro)
 
 
             elif opcao_selecionada == 5:
-                if cadastro_realizado == False:
+                if not cadastro_realizado:
                     exibir_cadastro_primeira_opcao()
 
                 else:
