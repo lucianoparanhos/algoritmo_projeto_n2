@@ -113,7 +113,7 @@ def cadastrar():
     saldo = obter_entrada_numerica("SALDO INICIAL: R$ ", 1000)
     limite_credito = obter_entrada_numerica("LIMITE DE CRÉDITO: R$ ", 0)
 
-    # Utilização da função obter_entrada_senha para cada campo
+    # Utilização da função obter_entrada_senha para cada campo de senha
     senha = obter_entrada_senha("SENHA: ")
     repetir_senha = obter_entrada_senha("REPITA A SENHA: ")
 
@@ -130,6 +130,8 @@ def cadastrar():
         "saldo": saldo,
         "limite_credito": limite_credito,
         "senha": senha,
+        "historico": [],
+        "conta_bloqueada": False
     }
 
     input('\nCADASTRO REALIZADO! PRESSIONE ENTER PARA VOLTAR AO MENU...')    
@@ -139,7 +141,6 @@ def cadastrar():
 # funcao que realiza o deposico na conta corrente
 def depositar(dados_cadastro):
     limpar_tela()
-    print(dados_cadastro)
     print("MACK BANK – DEPÓSITO EM CONTA")
     
     numero_conta = obter_entrada_numerica("INFORME O NÚMERO DA CONTA: ", 1000, 9999)
@@ -152,7 +153,13 @@ def depositar(dados_cadastro):
         valor_deposito = obter_entrada_numerica("VALOR DO DEPÓSITO: R$ ", 1)
 
         # Soma o valor depositado ao saldo
+        #
+        # Pode ser simplificado 
+        # dados_cadastro["saldo"] += valor_deposito
         dados_cadastro["saldo"] = dados_cadastro["saldo"] + valor_deposito
+        
+        # Incrementa no histórico o depósito realizado
+        dados_cadastro["historico"].append(f"DEPÓSITO R$ {valor_deposito:.2f}")
 
         limpar_tela()
         print("DEPÓSITO REALIZADO COM SUCESSO!")
@@ -162,29 +169,138 @@ def depositar(dados_cadastro):
 
     input('Pressione ENTER para continuar...')
 
+
+# funcao que retorna se a conta corrente esta bloqueada
+
+
+# funcao que exibe uma mensagem para conta bloqueada
+def exibir_mensagem_conta_bloqueada():
+    print("CONTA BLOQUEADA! ENTRE EM CONTATO COM UM FUNCIONÁRIO")
+    input('Pressione ENTER para continuar...')
+
 # funcao que exibe o menu de saque
-
-
 def sacar(dados_cadastro):
     limpar_tela()
-    print('sacar')
-    input('Pressione ENTER para continuar...')
+    print("MACK BANK – SAQUE DA CONTA")
+
+    if dados_cadastro["conta_bloqueada"] == True:
+        exibir_mensagem_conta_bloqueada()
+
+    else: 
+        numero_conta = obter_entrada_numerica("INFORME O NÚMERO DA CONTA: ", 1000, 9999)
+
+        # Se encontrar o númer da conta no dicionário, solicita o valor de depósito
+        if int(dados_cadastro["numero_conta"]) == numero_conta:
+            print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+
+            for tentativa in range(1, 4):
+                # Utilização da função obter_entrada_senha para cada campo de senha
+                senha = obter_entrada_senha("INFORME A SENHA: ")
+            
+                if validar_senha(senha, dados_cadastro["senha"]):
+                    # O valor do saque deve ser maior que zero
+                    valor_saque = obter_entrada_numerica("VALOR DO SAQUE: R$ ", 1)
+
+                    input('Pressione ENTER para continuar...')
+
+                else:
+                    print(f"SENHA INVÁLIDA: TENTATIVA {tentativa}/3")
+                    if tentativa == 3:
+                        dados_cadastro["conta_bloqueada"] = True
+                        exibir_mensagem_conta_bloqueada()
+            
+        else:
+            print("CONTA NÃO LOCALIZADA")
+            input('Pressione ENTER para continuar...')
+
 
 # funcao que exibe o menu de consulta de saldo
-
-
 def consultar_saldo(dados_cadastro):
     limpar_tela()
-    print('consultar_saldo')
-    input('Pressione ENTER para continuar...')
+    print("MACK BANK – CONSULTA SALDO")
+    
+    if dados_cadastro["conta_bloqueada"] == True:
+        exibir_mensagem_conta_bloqueada()
+
+    else:
+        numero_conta = obter_entrada_numerica("INFORME O NÚMERO DA CONTA: ", 1000, 9999)
+        senha_validada = False
+
+        if int(dados_cadastro["numero_conta"]) == numero_conta:
+            print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+
+            for tentativa in range(1, 4):
+                if senha_validada:
+                    continue
+
+                # Utilização da função obter_entrada_senha para cada campo de senha
+                senha = obter_entrada_senha("INFORME A SENHA: ")
+
+                senha_validada = validar_senha(senha, dados_cadastro["senha"])
+
+                if not senha_validada:
+                    print(f"SENHA INVÁLIDA: TENTATIVA {tentativa} de 3")
+                    if tentativa == 3:
+                        dados_cadastro["conta_bloqueada"] = True
+                        exibir_mensagem_conta_bloqueada()
+            
+            if senha_validada == True:
+                # O valor do saque deve ser maior que zero
+                print(f"SALDO EM CONTA: R$ {dados_cadastro["saldo"]:.2f}")
+                print(f"LIMITE DE CRÉDITO: R$ {dados_cadastro["limite_credito"]:.2f}")
+
+                input('Pressione ENTER para continuar...')
+
+        else:
+            print("CONTA NÃO LOCALIZADA")
+            input('Pressione ENTER para continuar...')
 
 # funcao que exibe o menu de consulta de extrato
 
 
 def consultar_extrato(dados_cadastro):
     limpar_tela()
-    print('consultar_extrato')
-    input('Pressione ENTER para continuar...')
+    print("MACK BANK – EXTRATO DA CONTA")
+    
+    if dados_cadastro["conta_bloqueada"] == True:
+        exibir_mensagem_conta_bloqueada()
+
+    else:
+        numero_conta = obter_entrada_numerica("INFORME O NÚMERO DA CONTA: ", 1000, 9999)
+        senha_validada = False
+
+        if int(dados_cadastro["numero_conta"]) == numero_conta:
+            print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+
+            for tentativa in range(1, 4):
+                if senha_validada:
+                    continue
+
+                # Utilização da função obter_entrada_senha para cada campo de senha
+                senha = obter_entrada_senha("INFORME A SENHA: ")
+
+                senha_validada = validar_senha(senha, dados_cadastro["senha"])
+
+                if not senha_validada:
+                    print(f"SENHA INVÁLIDA: TENTATIVA {tentativa} de 3")
+                    if tentativa == 3:
+                        dados_cadastro["conta_bloqueada"] = True
+                        exibir_mensagem_conta_bloqueada()
+            
+            if senha_validada:
+                # O valor do saque deve ser maior que zero
+                print(f"LIMITE DE CRÉDITO: R$ {dados_cadastro["limite_credito"]:.2f}")
+
+                for historico in dados_cadastro["historico"]:
+                    print(f"{historico}")
+
+                print(f"SALDO EM CONTA: R$ {dados_cadastro["saldo"]:.2f}")
+
+                input('Pressione ENTER para continuar...')
+
+        else:
+            print("CONTA NÃO LOCALIZADA")
+            input('Pressione ENTER para continuar...')
 
 # funcao que exibe o nome dos autores em finaliza o programa
 
