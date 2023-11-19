@@ -58,18 +58,35 @@ def obter_entrada_texto(entrada_texto):
 
 
 # funcao que valida a entrada de numeros para os campos do cadastro de conta corrente
-# texto_exibicao exibe a label para o usuário
+# texto_exibicao exibe o texto para o usuário
 # valor_minimo é o valor que será usado para aplicar validação de valor mínimo
-# valor_maximo é opcional e por padrão é zero. É usado 
+# valor_maximo é opcional e por padrão é zero
 def obter_entrada_numerica(texto_exibicao, valor_minimo, valor_maximo = 0):
-    while True:
+    numero_valido = False
+    while not numero_valido:
         # remove os espaços em branco e troca "," por "."
+        # necessário para fazer a conversão para float
         entrada = input(texto_exibicao).strip().replace(',', '.')        
 
-        if entrada.replace('.', '', 1).isdigit() and entrada.count('.') <= 1:
+        # verifica se a entrada é um número válido
+        # removendo todos os . "pontos" a entrada tem que ser um número
+        # e só pode ter um ou nenhum . "ponto" 
+
+        # é possível usar o split e verificar se o array é apenas de números
+        # apenas como exemplo comentado...
+        # banana_split = entrada.split(".")
+        # if banana_split[0].isdigit() and banana_split[1].isdigit() and len(banana_split) <= 2:
+        #     print("número válido")
+        # else:
+        #     print("número inválido")
+
+        if entrada.replace('.', '').isdigit() and entrada.count('.') <= 1:
             valor = float(entrada)
+
             if valor_minimo <= valor:
+                numero_valido = True
                 return valor
+            
             else:
                 if valor_maximo > 0:
                     print(f'O VALOR DEVE SER ENTRE {valor_minimo} E {valor_maximo}')
@@ -80,7 +97,7 @@ def obter_entrada_numerica(texto_exibicao, valor_minimo, valor_maximo = 0):
 
 
 # funcao que faz a validacao do comprimento da senha
-def validar_entrada_senha(senha):
+def validar_comprimento_senha(senha):
     return len(senha) == 6
 
 
@@ -88,7 +105,7 @@ def validar_entrada_senha(senha):
 def obter_entrada_senha(campo):
     senha = obter_entrada_texto(campo)
 
-    while not validar_entrada_senha(senha):
+    while not validar_comprimento_senha(senha):
         print("A senha deve conter 6 caracteres")
         senha = obter_entrada_texto(campo)
 
@@ -191,26 +208,41 @@ def sacar(dados_cadastro):
 
     else: 
         numero_conta = obter_entrada_numerica("INFORME O NÚMERO DA CONTA: ", 1000, 9999)
+        senha_validada = False
 
         # Se encontrar o númer da conta no dicionário, solicita o valor de depósito
         if int(dados_cadastro["numero_conta"]) == numero_conta:
             print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
 
             for tentativa in range(1, 4):
+                if senha_validada:
+                    continue
+
                 # Utilização da função obter_entrada_senha para cada campo de senha
-                senha = obter_entrada_senha("INFORME A SENHA: ")
-            
-                if validar_senha(senha, dados_cadastro["senha"]):
-                    # O valor do saque deve ser maior que zero
-                    valor_saque = obter_entrada_numerica("VALOR DO SAQUE: R$ ", 1)
+                senha = obter_entrada_senha("INFORME A SENHA: ")            
+                senha_validada = validar_senha(senha, dados_cadastro["senha"])
 
-                    input('Pressione ENTER para continuar...')
-
-                else:
-                    print(f"SENHA INVÁLIDA: TENTATIVA {tentativa}/3")
+                if not senha_validada:
+                    print(f"SENHA INVÁLIDA: TENTATIVA {tentativa} de 3")
                     if tentativa == 3:
                         dados_cadastro["conta_bloqueada"] = True
                         exibir_mensagem_conta_bloqueada()
+
+                if senha_validada:
+                    # O valor do saque deve ser maior que zero
+                    valor_saque = obter_entrada_numerica("VALOR DO SAQUE: R$ ", 1)
+                    saldo_mais_limite = float(dados_cadastro["saldo"]) + float(dados_cadastro["limite_credito"])
+
+                    # o saque não pode ser maior que saldo_mais_limite
+                    if valor_saque <= saldo_mais_limite:
+                        dados_cadastro["historico"].append(f"SAQUE R$ {valor_saque:.2f}")
+
+                        limpar_tela()
+                        print("SAQUE REALIZADO COM SUCESSO!")
+                    else:                            
+                        print("NÃO POSSUI SALDO SUFICIENTE")
+
+                    input('Pressione ENTER para continuar...')                
             
         else:
             print("CONTA NÃO LOCALIZADA")
@@ -238,7 +270,6 @@ def consultar_saldo(dados_cadastro):
 
                 # Utilização da função obter_entrada_senha para cada campo de senha
                 senha = obter_entrada_senha("INFORME A SENHA: ")
-
                 senha_validada = validar_senha(senha, dados_cadastro["senha"])
 
                 if not senha_validada:
@@ -305,15 +336,13 @@ def consultar_extrato(dados_cadastro):
             input('Pressione ENTER para continuar...')
 
 # funcao que exibe o nome dos autores em finaliza o programa
-
-
 def sair():
     limpar_tela()
     print("MACK BANK – SOBRE")
-    print("Este programa foi desenvolvido por")
-    print("GUILHERME TEODORO DE OLIVEIRA (42303893)")
-    print("LUCIANO PARANHOS (42324882)")
-    print("MIGUEL HONORIO BOREL CUTIS DOS SANTOS (42320003)")
+    print("Este programa foi desenvolvido por\n")
+    print("42303893 - GUILHERME TEODORO DE OLIVEIRA")
+    print("42324882 - LUCIANO PARANHOS")
+    print("42320003 - MIGUEL HONORIO BOREL CUTIS DOS SANTOS\n")
 
 
 def exibir_cadastro_primeira_opcao():
