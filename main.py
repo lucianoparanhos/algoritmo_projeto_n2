@@ -231,15 +231,26 @@ def sacar(dados_cadastro):
                 if senha_validada:
                     # O valor do saque deve ser maior que zero
                     valor_saque = obter_entrada_numerica("VALOR DO SAQUE: R$ ", 1)
-                    saldo_mais_limite = float(dados_cadastro["saldo"]) + float(dados_cadastro["limite_credito"])
+                    saldo_mais_limite = dados_cadastro["saldo"] + dados_cadastro["limite_credito"]
 
                     # o saque não pode ser maior que saldo_mais_limite
                     if valor_saque <= saldo_mais_limite:
+                        limpar_tela()
                         dados_cadastro["historico"].append(f"SAQUE R$ {valor_saque:.2f}")
 
-                        limpar_tela()
-                        print("SAQUE REALIZADO COM SUCESSO!")
-                    else:                            
+                        if valor_saque <= dados_cadastro["saldo"]:
+                            dados_cadastro["saldo"] = dados_cadastro["saldo"] - valor_saque
+                            
+                            print("SAQUE REALIZADO COM SUCESSO!")
+                        else:                            
+                            valor_saque = valor_saque - dados_cadastro["saldo"]
+                            dados_cadastro["saldo"] = 0
+                            
+                            dados_cadastro["limite_credito"] = dados_cadastro["limite_credito"] - valor_saque
+                            print("VOCÊ ESTÁ USANDO O SEU LIMITE DE CRÉDITO")                        
+                        
+                    else:
+                        limpar_tela()                      
                         print("NÃO POSSUI SALDO SUFICIENTE")
 
                     input('Pressione ENTER para continuar...')                
@@ -374,7 +385,7 @@ def main():
             if opcao_selecionada == 1:
                 if cadastro_realizado:
                     limpar_tela()
-                    print("CONTA CORRENTE já cadastrada!")
+                    print(f"CONTA CORRENTE já cadastrada! - {dados_cadastro["numero_conta"]}")
                     input('Pressione ENTER para continuar...')
                 else:
                     dados_cadastro = cadastrar()
