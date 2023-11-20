@@ -169,7 +169,7 @@ def depositar(dados_cadastro):
 
     # Se encontrar o númer da conta no dicionário, solicita o valor de depósito
     if int(dados_cadastro["numero_conta"]) == numero_conta:
-        print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+        print("NOME DO CLIENTE: ", dados_cadastro["nome_cliente"])
         
         # O valor de depósito deve ser maior que zero
         valor_deposito = obter_entrada_numerica("VALOR DO DEPÓSITO: R$ ", 1)
@@ -212,7 +212,7 @@ def sacar(dados_cadastro):
 
         # Se encontrar o númer da conta no dicionário, solicita o valor de depósito
         if int(dados_cadastro["numero_conta"]) == numero_conta:
-            print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+            print("NOME DO CLIENTE: ", dados_cadastro["nome_cliente"])
 
             for tentativa in range(1, 4):
                 if senha_validada:
@@ -273,7 +273,7 @@ def consultar_saldo(dados_cadastro):
         senha_validada = False
 
         if int(dados_cadastro["numero_conta"]) == numero_conta:
-            print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+            print("NOME DO CLIENTE: ", dados_cadastro["nome_cliente"])
 
             for tentativa in range(1, 4):
                 if senha_validada:
@@ -291,8 +291,12 @@ def consultar_saldo(dados_cadastro):
             
             if senha_validada:
                 # O valor do saque deve ser maior que zero
-                print(f"SALDO EM CONTA: R$ {dados_cadastro["saldo"]:.2f}")
-                print(f"LIMITE DE CRÉDITO: R$ {dados_cadastro["limite_credito"]:.2f}")
+                saldo_em_conta = dados_cadastro["saldo"]
+                limite_credito = dados_cadastro["limite_credito"]
+                # Foi necessário duas novas variáveis o print com aspas duplas
+                # gera problema quando vai acessar o valor de um dicionario                
+                print(f"SALDO EM CONTA: R$ {saldo_em_conta:.2f}")
+                print(f"LIMITE DE CRÉDITO: R$ {limite_credito:.2f}")
 
                 input('Pressione ENTER para continuar...')
 
@@ -314,7 +318,7 @@ def consultar_extrato(dados_cadastro):
         senha_validada = False
 
         if int(dados_cadastro["numero_conta"]) == numero_conta:
-            print(f"NOME DO CLIENTE: {dados_cadastro["nome_cliente"]}")
+            print("NOME DO CLIENTE: ", dados_cadastro["nome_cliente"])
 
             for tentativa in range(1, 4):
                 if senha_validada:
@@ -332,13 +336,16 @@ def consultar_extrato(dados_cadastro):
                         exibir_mensagem_conta_bloqueada()
             
             if senha_validada:
+                saldo_em_conta = dados_cadastro["saldo"]
+                limite_credito = dados_cadastro["limite_credito"]
+
                 # O valor do saque deve ser maior que zero
-                print(f"LIMITE DE CRÉDITO: R$ {dados_cadastro["limite_credito"]:.2f}")
+                print(f"LIMITE DE CRÉDITO: R$ {limite_credito:.2f}")
 
                 for historico in dados_cadastro["historico"]:
                     print(f"{historico}")
 
-                print(f"SALDO EM CONTA: R$ {dados_cadastro["saldo"]:.2f}")
+                print(f"SALDO EM CONTA: R$ {saldo_em_conta:.2f}")
 
                 input('Pressione ENTER para continuar...')
 
@@ -385,7 +392,7 @@ def main():
             if opcao_selecionada == 1:
                 if cadastro_realizado:
                     limpar_tela()
-                    print(f"CONTA CORRENTE já cadastrada! - {dados_cadastro["numero_conta"]}")
+                    print("CONTA CORRENTE já cadastrada! - ", dados_cadastro["numero_conta"])
                     input('Pressione ENTER para continuar...')
                 else:
                     dados_cadastro = cadastrar()
